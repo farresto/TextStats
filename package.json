@@ -1,7 +1,7 @@
 {
   "name": "textstats",
   "productName": "TextStats",
-  "version": "1.0.2",
+  "version": "1.0.8",
   "description": "Read text documents and e-books and report word, character and vocabulary statistics.",
   "main": "src/main/main.js",
   "author": "JP",
