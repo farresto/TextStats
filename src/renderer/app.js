@@ -247,7 +247,8 @@
 
   function renderTable() {
     const has = files.length > 0;
-    $('#emptyState').hidden = has;
+    // The drop area is always shown: centred when the list is empty, below the table otherwise.
+    $('#emptyState').classList.toggle('below', has);
     $('#filesSection').hidden = !has;
     $('#filesTitle').textContent = t('files', { n: files.length });
     $('#wpmNote').textContent = t('wpmNote', { wpm: fmtInt(settings.wordsPerMinute) });

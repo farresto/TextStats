@@ -49,16 +49,6 @@
   </header>
 
   <main class="content">
-    <section class="empty" id="emptyState">
-      <div class="drop-card" id="dropCard" role="button" tabindex="0">
-        <svg viewBox="0 0 48 48" class="drop-icon" aria-hidden="true"><path d="M14 6h14l10 10v24a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M28 6v10h10"/><path d="M24 22v12M19 29l5 5 5-5"/></svg>
-        <h2 data-i18n="drop.title"></h2>
-        <p><span data-i18n="drop.or"></span> <span class="link" data-i18n="drop.browse"></span></p>
-        <p class="web-only private-note" data-i18n="drop.private"></p>
-        <p class="formats">EPUB · MOBI · AZW · AZW3 · PDF · DOCX · DOC · ODT · RTF · TXT · CSV · Pages · iBooks Author</p>
-      </div>
-    </section>
-
     <section class="files" id="filesSection" hidden>
       <div class="files-head">
         <h2 id="filesTitle">Files</h2>
@@ -84,7 +74,16 @@
           <tbody id="filesBody"></tbody>
         </table>
       </div>
-      <p class="hint muted" data-i18n="hint"></p>
+    </section>
+
+    <section class="empty" id="emptyState">
+      <div class="drop-card" id="dropCard" role="button" tabindex="0">
+        <svg viewBox="0 0 48 48" class="drop-icon" aria-hidden="true"><path d="M14 6h14l10 10v24a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M28 6v10h10"/><path d="M24 22v12M19 29l5 5 5-5"/></svg>
+        <h2 data-i18n="drop.title"></h2>
+        <p><span data-i18n="drop.or"></span> <span class="link" data-i18n="drop.browse"></span></p>
+        <p class="web-only private-note" data-i18n="drop.private"></p>
+        <p class="formats">EPUB · MOBI · AZW · AZW3 · PDF · DOCX · DOC · ODT · RTF · TXT · CSV · Pages · iBooks Author</p>
+      </div>
     </section>
   </main>
 

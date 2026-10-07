@@ -127,6 +127,7 @@ input { font: inherit; color: inherit; }
 .content { flex: 1; overflow: auto; padding: 24px; }
 
 .empty { height: 100%; display: grid; place-items: center; }
+.empty.below { height: auto; margin-top: 56px; padding-bottom: 24px; }
 .drop-card {
   width: min(620px, 100%);
   padding: 48px 32px;
@@ -201,7 +202,6 @@ input { font: inherit; color: inherit; }
 
 .remove-btn { width: 28px; height: 28px; color: var(--text-faint); }
 .remove-btn:hover { color: var(--danger); background: var(--danger-soft); }
-.hint { margin-top: 14px; font-size: 14px; }
 
 /* ------------------------------------------------------------ drag overlay */
 .drag-overlay {
