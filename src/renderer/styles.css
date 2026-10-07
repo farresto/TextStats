@@ -201,7 +201,7 @@ input { font: inherit; color: inherit; }
 
 .remove-btn { width: 28px; height: 28px; color: var(--text-faint); }
 .remove-btn:hover { color: var(--danger); background: var(--danger-soft); }
-.hint { margin-top: 10px; }
+.hint { margin-top: 14px; font-size: 14px; }
 
 /* ------------------------------------------------------------ drag overlay */
 .drag-overlay {

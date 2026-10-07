@@ -10,7 +10,7 @@
     // top bar
     tagline: 'Word, character and vocabulary statistics for documents and e-books',
     preferences: 'Preferences',
-    openFiles: 'Open files',
+    openFiles: 'Add files',
     'theme.toDark': 'Switch to dark theme',
     'theme.toLight': 'Switch to light theme',
     'theme.system': 'System',
@@ -250,7 +250,7 @@
   const es = {
     tagline: 'Estadísticas de palabras, caracteres y vocabulario para documentos y libros electrónicos',
     preferences: 'Preferencias',
-    openFiles: 'Abrir archivos',
+    openFiles: 'Añadir archivos',
     'theme.toDark': 'Cambiar al tema oscuro',
     'theme.toLight': 'Cambiar al tema claro',
     'theme.system': 'Sistema',
