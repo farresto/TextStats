@@ -1,28 +1,41 @@
 # TextStats
 
-A Windows desktop app (Electron) that reads documents and e-books and reports word and character counts, reading time, and a full table of how often each word is used.
+Reads documents and e-books and reports word and character counts, reading time, and a full table of how often each word is used, with word types (nouns, verbs…) in English and Spanish.
 
-## Run it
+It comes in two versions built from **the same code**:
 
-1. Install **Node.js LTS** (version 20 or newer) from https://nodejs.org. You only need to do this once.
-2. Double-click **`Start TextStats.bat`**. The first run downloads Electron (about 100 MB), so it takes a minute. Later runs start right away.
+- **Website**: runs in any modern browser and is published on GitHub Pages. Files are read in the browser and never uploaded.
+- **Windows app**: a portable `.exe` (Electron) that needs no installation.
 
-You can also use a terminal in this folder:
+## The two versions
 
-```
-npm install      (first time only)
-npm start
-```
+| | Website | Windows app |
+|---|---|---|
+| Try it on this computer | Double-click **`Preview Website.bat`** (opens http://localhost:8080) | Double-click **`Start TextStats.bat`** |
+| Build it | Built automatically on GitHub when you push (see below). `Preview Website.bat` builds it locally into `dist-web` | Double-click **`Build TextStats.bat`**: makes `dist\TextStats <version> Portable.exe` |
+| Needs | Node.js | Node.js; the first run downloads Electron (about 100 MB) |
+| Settings saved in | The browser | `TextStats-settings.json` next to the `.exe` |
 
-### Build a normal Windows program (.exe)
+Install **Node.js LTS** (version 20 or newer) from https://nodejs.org once; both versions need it to build.
 
-Double-click **`Build TextStats.bat`**. It raises the version number, deletes the previous build and creates a new one in `dist`. (Or run `npm run dist` yourself.) The app icon comes from `build\icon.ico`.
+Terminal equivalents: `npm start` (app), `npm run dist` (exe), `npm run preview:web` (website).
 
-This creates one portable program, for example `dist\TextStats 1.0.3 Portable.exe`. It needs no installation: copy it anywhere (even a USB stick) and double-click it. Its settings are saved next to it in `TextStats-settings.json`. On each start it unpacks itself to a temporary folder, so it takes a few seconds to open.
+### Publishing the website on GitHub Pages
+
+1. One time only: copy `tools\deploy-website.yml` to `.github\workflows\deploy-website.yml` (create the two folders). That file tells GitHub how to build and publish the website.
+2. Push this folder to your GitHub repository (the `dist`, `dist-web` and `node_modules` folders are ignored by `.gitignore`).
+3. On GitHub, open the repository **Settings › Pages** and set **Source** to **GitHub Actions** (one time only).
+4. Every push to the `main` branch now runs `.github/workflows/deploy-website.yml`: it tests the file readers, builds the website and publishes it at `https://<your-user>.github.io/<repository>/`. You can follow it in the **Actions** tab.
+
+To share the Windows app, attach the portable `.exe` to a GitHub **Release** (Releases › Draft a new release) rather than committing it.
+
+### About the portable .exe
+
+It needs no installation: copy it anywhere (even a USB stick) and double-click it. On each start it unpacks itself to a temporary folder, so it takes a few seconds to open. `Build TextStats.bat` raises the version number and deletes the previous build first. The app icon comes from `build\icon.ico`.
 
 ## Features
 
-- Add files by dragging them anywhere onto the window or with **Open files** (opens the standard Windows file dialog). You can add several at once.
+- Add files by dragging them anywhere onto the window or with **Open files**. You can add several at once.
 - Each file is one row with: name and extension, file size, word count, character count without spaces, character count with spaces, and reading time (HH:MM).
 - **Preferences**: reading speed in words per minute (default 238, the average adult silent reading speed), the theme (Light or Dark) and the app language (English or Spanish). Changes show immediately; **Save** keeps them and **Cancel** undoes them. Until you choose a theme, the app follows the Windows light/dark setting; the moon/sun button in the top bar switches it quickly. On first run the language follows Windows.
 - **Text language** (in Create Report): English or Spanish, detected automatically for each file and changeable. It decides which word lists the word-type toggles use, and whether the possessive 's rule applies (English only). It is separate from the app language, so you can use the app in English to analyse Spanish books.
@@ -66,11 +79,15 @@ DRM-protected books (Kindle, Adobe ADEPT EPUB) can't be read. The app shows a cl
 ## Project layout
 
 ```
-src/main/        Electron main process, preload bridge, settings
-src/extract/     File readers (one per format) and the heading/copyright/TOC detection
-src/renderer/    The app window (HTML/CSS/JS) and the shared statistics code
+src/renderer/    The window (HTML/CSS/JS), translations, statistics and word-type lists. Shared by both versions
+src/extract/     File readers (one per format), heading/copyright/TOC detection, word classification. Shared
+src/main/        Windows app only: Electron main process, preload bridge, settings, background workers
+src/web/         Website only: browser bridge (web-api.js), Web Worker, small Buffer stand-in, pdf.js loader
+tools/           build-web.js (builds the website), serve-web.js (local preview), build-lexicon.py (word lists)
 vendor/pdfjs/    Mozilla pdf.js (Apache 2.0), used to read PDFs
-test/            Sample files and test scripts (npm test)
+vendor/lexicon/  English and Spanish word lists (sources and licences in SOURCES.md)
+test/            Sample files and test script (npm test)
+.github/         GitHub Actions workflow that publishes the website
 ```
 
-All format readers except PDF are written from scratch. The app needs no runtime npm packages, only Electron to run and electron-builder to package.
+All format readers except PDF are written from scratch, and the website build needs no npm packages. `tools/build-web.js` copies `src/renderer`, bundles `src/extract` into `core.js`, and swaps the two desktop-only pieces (the Electron bridge and the pdf.js loader) for their versions in `src/web`.

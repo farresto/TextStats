@@ -1,6 +1,6 @@
 'use strict';
 
-const path = require('path').posix;
+const path = require('../posix-path');
 const { parse, find, findAll, local, attr } = require('../markup');
 const { DocBuilder, htmlToBlocks } = require('../builder');
 const { UserError } = require('../errors');

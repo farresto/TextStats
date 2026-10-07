@@ -1,3 +1,15 @@
+# Dependencies (installed with npm install)
 node_modules/
+
+# Build output
 dist/
-test/shots/
+dist-web/
+
+# Settings saved next to the app when run from this folder
+TextStats-settings.json
+
+# Logs and OS files
+npm-debug.log*
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,7 +1,5 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
 const { UserError } = require('./errors');
 const { ZipFile } = require('./zip');
 const { finalize } = require('./classify');
@@ -24,14 +22,20 @@ const LABELS = {
   docx: 'Word (DOCX)', doc: 'Word 97-2003 (DOC)', odt: 'OpenDocument (ODT)', pages: 'Apple Pages', iba: 'iBooks Author',
 };
 
+// Desktop entry point: read the file, then extract.
 async function extractFile(filePath, onProgress = () => {}) {
   let buf;
   try {
-    buf = fs.readFileSync(filePath);
+    buf = require('fs').readFileSync(filePath);
   } catch (err) {
     throw err.code === 'ENOENT' ? new UserError('notFound') : new UserError('cannotOpen', err.code || err.message);
   }
-  const ext = path.extname(filePath).toLowerCase();
+  return extractBuffer(buf, filePath, onProgress);
+}
+
+// Shared entry point (desktop and web): file contents + file name.
+async function extractBuffer(buf, fileName, onProgress = () => {}) {
+  const ext = extname(String(fileName)).toLowerCase();
   const kind = sniff(buf, ext);
   onProgress(0.05);
 
@@ -45,7 +49,7 @@ async function extractFile(filePath, onProgress = () => {}) {
     case 'topaz':
       throw new UserError('topaz');
     default:
-      builder = await formats[kind.type]().extract(buf, { ext, onProgress, filePath });
+      builder = await formats[kind.type]().extract(buf, { ext, onProgress, filePath: fileName });
   }
   onProgress(0.95);
   const doc = finalize(builder);
@@ -138,4 +142,10 @@ async function extractZip(buf, ext, onProgress) {
   throw new UserError('zipUnknown');
 }
 
-module.exports = { extractFile, sniff };
+function extname(p) {
+  const base = p.slice(Math.max(p.lastIndexOf('/'), p.lastIndexOf('\\')) + 1);
+  const i = base.lastIndexOf('.');
+  return i > 0 ? base.slice(i) : '';
+}
+
+module.exports = { extractFile, extractBuffer, sniff };

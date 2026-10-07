@@ -1,7 +1,10 @@
 'use strict';
 
 // Minimal dependency-free ZIP reader (stored + deflate, ZIP64 sizes).
-const zlib = require('zlib');
+const { inflateRaw } = require('./inflate');
+
+// Wrap a Uint8Array as a Buffer without copying (Buffer is a small shim in the browser).
+const toBuffer = (u8) => Buffer.from(u8.buffer, u8.byteOffset, u8.byteLength);
 
 class ZipFile {
   constructor(buf) {
@@ -123,7 +126,7 @@ class ZipFile {
     const start = lp + 30 + buf.readUInt16LE(lp + 26) + buf.readUInt16LE(lp + 28);
     const data = buf.subarray(start, start + en.csize);
     if (en.method === 0) return Buffer.from(data);
-    if (en.method === 8) return zlib.inflateRawSync(data);
+    if (en.method === 8) return toBuffer(inflateRaw(data, en.usize));
     throw new Error(`unsupported compression method ${en.method} for ${name}`);
   }
 
@@ -163,4 +166,4 @@ function decodeText(b) {
   return b.toString('utf8');
 }
 
-module.exports = { ZipFile, decodeText };
+module.exports = { ZipFile, decodeText, toBuffer };

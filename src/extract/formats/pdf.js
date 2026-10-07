@@ -1,34 +1,19 @@
 'use strict';
 
-const path = require('path');
-const { pathToFileURL } = require('url');
 const { DocBuilder } = require('../builder');
 const { UserError } = require('../errors');
-
-const VENDOR = path.join(__dirname, '..', '..', '..', 'vendor', 'pdfjs');
-let pdfjsPromise = null;
-
-function loadPdfjs() {
-  if (!pdfjsPromise) {
-    require('../dom-polyfill');
-    pdfjsPromise = import(pathToFileURL(path.join(VENDOR, 'pdf.min.mjs')).href).then((lib) => {
-      lib.GlobalWorkerOptions.workerSrc = pathToFileURL(path.join(VENDOR, 'pdf.worker.min.mjs')).href;
-      return lib;
-    });
-  }
-  return pdfjsPromise;
-}
+const loader = require('../pdf-loader');
 
 async function extract(buf, { onProgress }) {
-  const pdfjs = await loadPdfjs();
+  const pdfjs = await loader.loadPdfjs();
   let pdf;
   let task;
   try {
     task = pdfjs.getDocument({
       data: new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength),
-      cMapUrl: pathToFileURL(path.join(VENDOR, 'cmaps')).href + '/',
+      cMapUrl: loader.cMapUrl,
       cMapPacked: true,
-      standardFontDataUrl: pathToFileURL(path.join(VENDOR, 'standard_fonts')).href + '/',
+      standardFontDataUrl: loader.standardFontDataUrl,
       disableFontFace: true,
       isEvalSupported: false,
       useSystemFonts: false,

@@ -3,8 +3,8 @@
 // Apple Pages and iBooks Author.
 //  - Pages 5+ / newer iWork: "IWA" archives (Snappy-compressed protobuf) inside Index/.
 //  - Pages '09 and iBooks Author: XML using the "sf:" (SFWP) vocabulary.
-const zlib = require('zlib');
-const { ZipFile, decodeText } = require('../zip');
+const { gunzip } = require('../inflate');
+const { ZipFile, decodeText, toBuffer } = require('../zip');
 const { parse, local, walk } = require('../markup');
 const { DocBuilder, htmlToBlocks } = require('../builder');
 const { UserError } = require('../errors');
@@ -213,7 +213,7 @@ function insideSkipped(el) {
 
 function readMaybeGzip(zip, name) {
   const data = zip.bytes(name);
-  return decodeText(/\.gz$/i.test(name) ? zlib.gunzipSync(data) : data);
+  return decodeText(/\.gz$/i.test(name) ? toBuffer(gunzip(data)) : data);
 }
 
 async function extract(zip, { kind, onProgress }) {
