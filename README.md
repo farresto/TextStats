@@ -20,18 +20,11 @@ Install **Node.js LTS** (version 20 or newer) from https://nodejs.org once; both
 
 Terminal equivalents: `npm start` (app), `npm run dist` (exe), `npm run preview:web` (website).
 
-### Publishing the website on GitHub Pages
-
-1. One time only: copy `tools\deploy-website.yml` to `.github\workflows\deploy-website.yml` (create the two folders). That file tells GitHub how to build and publish the website.
-2. Push this folder to your GitHub repository (the `dist`, `dist-web` and `node_modules` folders are ignored by `.gitignore`).
-3. On GitHub, open the repository **Settings › Pages** and set **Source** to **GitHub Actions** (one time only).
-4. Every push to the `main` branch now runs `.github/workflows/deploy-website.yml`: it tests the file readers, builds the website and publishes it at `https://<your-user>.github.io/<repository>/`. You can follow it in the **Actions** tab.
-
-To share the Windows app, attach the portable `.exe` to a GitHub **Release** (Releases › Draft a new release) rather than committing it.
 
 ### About the portable .exe
 
 It needs no installation: copy it anywhere (even a USB stick) and double-click it. On each start it unpacks itself to a temporary folder, so it takes a few seconds to open. `Build TextStats.bat` raises the version number and deletes the previous build first. The app icon comes from `build\icon.ico`.
+
 
 ## Features
 
@@ -61,7 +54,6 @@ It needs no installation: copy it anywhere (even a USB stick) and double-click i
 | TXT, CSV/TSV | Full (encoding is detected automatically) |
 | Apple Pages (`.pages`) | Best effort. Reads Pages '09 and the current Pages format. |
 | iBooks Author (`.iba`) | Best effort |
-| **KFX** (`.kfx`), Amazon Topaz | **Not supported.** These are closed Amazon formats and almost always DRM-protected. Convert a DRM-free copy to EPUB or AZW3 with Calibre first. |
 
 DRM-protected books (Kindle, Adobe ADEPT EPUB) can't be read. The app shows a clear message for these files instead of a count.
 
