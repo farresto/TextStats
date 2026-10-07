@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TextStats</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <defs>
+          <linearGradient id="brandGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a72ef"/><stop offset="1" stop-color="#2a4cc4"/></linearGradient>
+        </defs>
+        <path d="M7.5 2.5h11.2l6.8 6.8v17.2a3 3 0 0 1-3 3H7.5a3 3 0 0 1-3-3v-21a3 3 0 0 1 3-3z" fill="url(#brandGrad)"/>
+        <path d="M18.7 2.5v4.3a2.5 2.5 0 0 0 2.5 2.5h4.3z" fill="#a9bdff"/>
+        <rect x="8" y="11.3" width="10.5" height="1.9" rx="0.95" fill="#ffffff"/>
+        <rect x="8" y="15.3" width="7.5" height="1.9" rx="0.95" fill="#ffffff"/>
+        <rect x="8" y="19.3" width="5.5" height="1.9" rx="0.95" fill="#ffffff"/>
+        <g stroke-linecap="round">
+          <line x1="24.2" y1="24.2" x2="29" y2="29" stroke="#ffffff" stroke-width="5.4"/>
+          <circle cx="20.2" cy="20.2" r="6.1" fill="#ffffff" stroke="#ffffff" stroke-width="2.6"/>
+          <line x1="24.4" y1="24.4" x2="28.6" y2="28.6" stroke="#16245e" stroke-width="3.2"/>
+          <circle cx="20.2" cy="20.2" r="5.2" fill="#e6ecff" stroke="#16245e" stroke-width="2.2"/>
+          <path d="M17.6 18.6a3 3 0 0 1 2.4-1.8" fill="none" stroke="#ffffff" stroke-width="1.3"/>
+        </g>
+      </svg>
+      <div>
+        <h1>TextStats</h1>
+        <p class="tagline" data-i18n="tagline"></p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost icon-btn" id="themeToggle">
+        <svg viewBox="0 0 24 24" class="icon icon-sun" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
+        <svg viewBox="0 0 24 24" class="icon icon-moon" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+      </button>
+      <button class="btn btn-ghost" id="prefsBtn" data-i18n-title="preferences">
+        <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+        <span data-i18n="preferences"></span>
+      </button>
+      <button class="btn btn-primary" id="openBtn">
+        <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span data-i18n="openFiles"></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="content">
+    <section class="empty" id="emptyState">
+      <div class="drop-card" id="dropCard" role="button" tabindex="0">
+        <svg viewBox="0 0 48 48" class="drop-icon" aria-hidden="true"><path d="M14 6h14l10 10v24a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M28 6v10h10"/><path d="M24 22v12M19 29l5 5 5-5"/></svg>
+        <h2 data-i18n="drop.title"></h2>
+        <p><span data-i18n="drop.or"></span> <span class="link" data-i18n="drop.browse"></span></p>
+        <p class="formats">EPUB · MOBI · AZW · AZW3 · PDF · DOCX · DOC · ODT · RTF · TXT · CSV · Pages · iBooks Author</p>
+      </div>
+    </section>
+
+    <section class="files" id="filesSection" hidden>
+      <div class="files-head">
+        <h2 id="filesTitle">Files</h2>
+        <div class="files-head-actions">
+          <span class="muted small" id="wpmNote"></span>
+          <button class="btn btn-ghost btn-sm" id="clearBtn" data-i18n="clearList"></button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="files-table">
+          <thead>
+            <tr>
+              <th class="col-name" data-i18n="col.name"></th>
+              <th class="num" data-i18n="col.size"></th>
+              <th class="num" data-i18n="col.words"></th>
+              <th class="num"><span data-i18n="col.chars"></span><br /><span class="th-sub" data-i18n="col.noSpaces"></span></th>
+              <th class="num"><span data-i18n="col.chars"></span><br /><span class="th-sub" data-i18n="col.withSpaces"></span></th>
+              <th class="num"><span data-i18n="col.readingTime"></span><br /><span class="th-sub">HH:MM</span></th>
+              <th class="col-actions" data-i18n="col.report"></th>
+              <th class="col-remove"><span class="sr-only" data-i18n="col.remove"></span></th>
+            </tr>
+          </thead>
+          <tbody id="filesBody"></tbody>
+        </table>
+      </div>
+      <p class="hint muted small" data-i18n="hint"></p>
+    </section>
+  </main>
+
+  <div class="drag-overlay" id="dragOverlay" hidden>
+    <div class="drag-overlay-inner" data-i18n="drop.overlay"></div>
+  </div>
+
+  <!-- Report configuration -->
+  <dialog class="modal" id="configDialog" aria-labelledby="configTitle">
+    <form method="dialog" class="modal-body" id="configForm">
+      <header class="modal-head">
+        <div>
+          <h2 id="configTitle" data-i18n="cfg.title"></h2>
+          <p class="muted small" id="configFile"></p>
+        </div>
+        <button type="button" class="btn btn-ghost icon-btn" data-close data-i18n-aria-label="close">
+          <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="config-grid">
+        <div class="field">
+          <span class="field-label" data-i18n="cfg.start"></span>
+          <div class="point-row">
+            <button type="button" class="point-btn" id="startBtn"></button>
+            <button type="button" class="btn btn-ghost btn-sm" id="startReset" hidden data-i18n="reset"></button>
+          </div>
+          <span class="muted small" data-i18n="cfg.pickHint"></span>
+        </div>
+        <div class="field">
+          <span class="field-label" data-i18n="cfg.end"></span>
+          <div class="point-row">
+            <button type="button" class="point-btn" id="endBtn"></button>
+            <button type="button" class="btn btn-ghost btn-sm" id="endReset" hidden data-i18n="reset"></button>
+          </div>
+          <span class="muted small" data-i18n="cfg.pickHint"></span>
+        </div>
+      </div>
+
+      <div class="toggles">
+        <div class="toggle-row" data-opt="textLanguage">
+          <div>
+            <div class="toggle-title" data-i18n="cfg.textLang"></div>
+            <div class="toggle-note muted small"></div>
+          </div>
+          <div class="segmented" role="radiogroup">
+            <button type="button" data-val="en">English</button>
+            <button type="button" data-val="es">Español</button>
+          </div>
+        </div>
+        <div class="toggle-row" data-opt="includeHeadings">
+          <div>
+            <div class="toggle-title" data-i18n="cfg.headings"></div>
+            <div class="toggle-note muted small"></div>
+          </div>
+          <div class="segmented" role="radiogroup">
+            <button type="button" data-val="include" data-i18n="include"></button>
+            <button type="button" data-val="exclude" data-i18n="exclude"></button>
+          </div>
+        </div>
+        <div class="toggle-row" data-opt="includeCopyright">
+          <div>
+            <div class="toggle-title" data-i18n="cfg.copyright"></div>
+            <div class="toggle-note muted small"></div>
+          </div>
+          <div class="segmented" role="radiogroup">
+            <button type="button" data-val="include" data-i18n="include"></button>
+            <button type="button" data-val="exclude" data-i18n="exclude"></button>
+          </div>
+        </div>
+        <div class="toggle-row" data-opt="includeToc">
+          <div>
+            <div class="toggle-title" data-i18n="cfg.toc"></div>
+            <div class="toggle-note muted small"></div>
+          </div>
+          <div class="segmented" role="radiogroup">
+            <button type="button" data-val="include" data-i18n="include"></button>
+            <button type="button" data-val="exclude" data-i18n="exclude"></button>
+          </div>
+        </div>
+        <div class="toggle-row" data-opt="mergePossessives">
+          <div>
+            <div class="toggle-title" data-i18n="cfg.possessive"></div>
+            <div class="toggle-note muted small"></div>
+          </div>
+          <div class="segmented" role="radiogroup">
+            <button type="button" data-val="include" data-i18n="merge"></button>
+            <button type="button" data-val="exclude" data-i18n="keep"></button>
+          </div>
+        </div>
+      </div>
+
+      <footer class="modal-foot">
+        <button type="button" class="btn" data-close data-i18n="cancel"></button>
+        <button type="submit" class="btn btn-primary" id="startReportBtn" data-i18n="startReport"></button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- Start / end point picker -->
+  <dialog class="modal modal-xl" id="pickerDialog" aria-labelledby="pickerTitle">
+    <div class="modal-body picker">
+      <header class="modal-head">
+        <div>
+          <h2 id="pickerTitle"></h2>
+          <p class="muted small" id="pickerHelp"></p>
+        </div>
+        <div class="picker-search">
+          <input type="search" id="pickerSearch" data-i18n-placeholder="pick.find" autocomplete="off" />
+          <span class="muted small" id="pickerSearchCount"></span>
+        </div>
+      </header>
+      <div class="picker-text" id="pickerText" tabindex="0"></div>
+      <footer class="modal-foot">
+        <div class="picker-status small" id="pickerStatus"></div>
+        <div class="spacer"></div>
+        <button type="button" class="btn btn-ghost" id="pickerReset"></button>
+        <button type="button" class="btn" id="pickerCancel" data-i18n="cancel"></button>
+        <button type="button" class="btn btn-primary" id="pickerOk" disabled data-i18n="pick.ok"></button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Report view -->
+  <dialog class="modal modal-xl" id="reportDialog" aria-labelledby="reportTitle">
+    <div class="modal-body report">
+      <header class="modal-head">
+        <div>
+          <h2 id="reportTitle"></h2>
+          <div class="chips" id="reportChips"></div>
+        </div>
+        <button type="button" class="btn btn-ghost icon-btn" data-close data-i18n-aria-label="close">
+          <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+      <div class="stat-cards" id="reportStats"></div>
+      <div class="type-toggles" id="typeToggles" data-i18n-aria-label="rep.wordTypes"></div>
+      <div class="report-table-head">
+        <div class="report-table-title">
+          <h3 data-i18n="rep.wordsUsed"></h3>
+          <span class="muted small" id="reportCount"></span>
+        </div>
+        <input type="search" id="reportFilter" data-i18n-placeholder="rep.filter" autocomplete="off" />
+      </div>
+      <div class="vtable" id="vtable">
+        <div class="vrow vhead" role="row">
+          <button class="vcell sort" data-key="word" role="columnheader"><span data-i18n="rep.colWord"></span> <span class="arrow"></span></button>
+          <button class="vcell sort num" data-key="count" role="columnheader"><span data-i18n="rep.colCount"></span> <span class="arrow"></span></button>
+          <button class="vcell sort num" data-key="pct" role="columnheader"><span data-i18n="rep.colPct"></span> <span class="arrow"></span></button>
+        </div>
+        <div class="vscroll" id="vscroll">
+          <div class="vspacer" id="vspacer"><div class="vwindow" id="vwindow"></div></div>
+        </div>
+      </div>
+      <footer class="modal-foot">
+        <div class="muted small" id="reportFootNote"></div>
+        <div class="spacer"></div>
+        <button type="button" class="btn" data-close data-i18n="close"></button>
+        <button type="button" class="btn btn-primary" id="saveCsvBtn">
+          <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 19h14"/></svg>
+          <span data-i18n="rep.saveCsv"></span>
+        </button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Preferences -->
+  <dialog class="modal" id="prefsDialog" aria-labelledby="prefsTitle">
+    <form method="dialog" class="modal-body" id="prefsForm">
+      <header class="modal-head">
+        <h2 id="prefsTitle" data-i18n="preferences"></h2>
+        <button type="button" class="btn btn-ghost icon-btn" data-close data-i18n-aria-label="close">
+          <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+      <div class="field">
+        <label class="field-label" for="wpmInput" data-i18n="pref.wpm"></label>
+        <div class="wpm-row">
+          <input type="number" id="wpmInput" min="50" max="2000" step="1" required />
+          <div class="presets">
+            <button type="button" class="chip-btn" data-wpm="200" data-i18n="pref.slow"></button>
+            <button type="button" class="chip-btn" data-wpm="238" data-i18n="pref.average"></button>
+            <button type="button" class="chip-btn" data-wpm="300" data-i18n="pref.fast"></button>
+          </div>
+        </div>
+        <p class="muted small" data-i18n="pref.wpmNote"></p>
+      </div>
+      <div class="field">
+        <span class="field-label" data-i18n="pref.theme"></span>
+        <div class="segmented" id="themeSeg" role="radiogroup">
+          <button type="button" data-val="light" data-i18n="theme.light"></button>
+          <button type="button" data-val="dark" data-i18n="theme.dark"></button>
+        </div>
+      </div>
+      <div class="field">
+        <span class="field-label" data-i18n="pref.language"></span>
+        <div class="segmented" id="langSeg" role="radiogroup">
+          <button type="button" data-val="en">English</button>
+          <button type="button" data-val="es">Español</button>
+        </div>
+        <p class="muted small" data-i18n="pref.languageNote"></p>
+      </div>
+      <footer class="modal-foot">
+        <button type="button" class="btn" data-close data-i18n="cancel"></button>
+        <button type="submit" class="btn btn-primary" data-i18n="save"></button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script src="i18n.js"></script>
+  <script src="stats.js"></script>
+  <script src="wordclasses.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
