@@ -4,7 +4,7 @@ Reads documents and e-books and reports word and character counts, reading time,
 
 It comes in two versions built from **the same code**:
 
-- **Website**: runs in any modern browser and is published on GitHub Pages. Files are read in the browser and never uploaded.
+- **Website**: runs in any modern browser, on computers and phones (Android and iPhone), and is published on GitHub Pages. Files are read in the browser and never uploaded.
 - **Windows app**: a portable `.exe` (Electron) that needs no installation.
 
 ## The two versions
@@ -28,7 +28,8 @@ It needs no installation: copy it anywhere (even a USB stick) and double-click i
 
 ## Features
 
-- Add files by dragging them anywhere onto the window or with **Open files**. You can add several at once.
+- Add files by dragging them anywhere onto the window or with **Add files**. You can add several at once.
+- On a phone the website shows each file as a card, and the dialogs fill the screen. Very large books need a lot of memory on a phone; if the browser stops the file reader, the row shows a message and you can try again with fewer files at once.
 - Each file is one row with: name and extension, file size, word count, character count without spaces, character count with spaces, and reading time (HH:MM).
 - **Preferences**: reading speed in words per minute (default 238, the average adult silent reading speed), the theme (Light or Dark) and the app language (English or Spanish). Changes show immediately; **Save** keeps them and **Cancel** undoes them. Until you choose a theme, the app follows the Windows light/dark setting; the moon/sun button in the top bar switches it quickly. On first run the language follows Windows.
 - **Text language** (in Create Report): English or Spanish, detected automatically for each file and changeable. It decides which word lists the word-type toggles use, and whether the possessive 's rule applies (English only). It is separate from the app language, so you can use the app in English to analyse Spanish books.
@@ -77,7 +78,8 @@ src/main/        Windows app only: Electron main process, preload bridge, settin
 src/web/         Website only: browser bridge (web-api.js), Web Worker, small Buffer stand-in, pdf.js loader
 tools/           build-web.js (builds the website), serve-web.js (local preview), build-lexicon.py (word lists)
 vendor/pdfjs/    Mozilla pdf.js (Apache 2.0), used to read PDFs
-vendor/lexicon/  English and Spanish word lists (sources and licences in SOURCES.md)
+vendor/lexicon/  English and Spanish word lists (sources and licences in SOURCES.md). Sorted, compact format
+                 searched in place, so they use little memory (important on phones)
 test/            Sample files and test script (npm test)
 .github/         GitHub Actions workflow that publishes the website
 ```

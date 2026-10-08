@@ -172,18 +172,34 @@ def spanish(entries_dir):
 
 
 def write(path, lex, ud):
+    """Format v2: "#v2<TAB>group0<TAB>group1..." then "word<TAB>group number (base 36)" lines,
+    sorted the way JavaScript compares strings (UTF-16 code units) for binary search."""
     cands, verb_forms = lex
-    by = collections.defaultdict(list)
+    groups, index, rows = [], {}, []
     for form, cs in cands.items():
-        by[','.join(choose(form, cs, ud, verb_forms))].append(form)
+        key = ','.join(choose(form, cs, ud, verb_forms))
+        if key not in index:
+            index[key] = len(groups)
+            groups.append(key)
+        rows.append((form, index[key]))
+    rows.sort(key=lambda r: r[0].encode('utf-16-be'))
+    b36 = lambda n: '0' if n == 0 else ''.join('0123456789abcdefghijklmnopqrstuvwxyz'[d] for d in digits36(n))
     with gzip.open(path, 'wt', encoding='utf8', compresslevel=9) as out:
-        for key in sorted(by):
-            out.write('#' + key + '\n')
-            out.write('\n'.join(sorted(by[key])) + '\n')
+        out.write('#v2\t' + '\t'.join(groups) + '\n')
+        for form, g in rows:
+            out.write(f'{form}\t{b36(g)}\n')
     stats = collections.Counter()
-    for key, forms in by.items():
-        stats['several' if ',' in key else key] += len(forms)
+    for form, g in rows:
+        stats['several' if ',' in groups[g] else groups[g]] += 1
     return dict(stats)
+
+
+def digits36(n):
+    out = []
+    while n:
+        n, r = divmod(n, 36)
+        out.append(r)
+    return reversed(out)
 
 
 def main():

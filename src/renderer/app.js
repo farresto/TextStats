@@ -271,8 +271,17 @@
   }
 
   function rowHtml(f) {
+    // data-label: column name shown next to each value in the phone layout (styles.css)
+    const L = {
+      size: esc(t('col.size')),
+      words: esc(t('col.words')),
+      noSp: esc(`${t('col.chars')} (${t('col.noSpaces')})`),
+      withSp: esc(`${t('col.chars')} (${t('col.withSpaces')})`),
+      time: esc(t('col.readingTime')),
+    };
+    const pendingCells = `<td class="num pending" data-label="${L.words}">—</td><td class="num pending" data-label="${L.noSp}">—</td><td class="num pending" data-label="${L.withSp}">—</td><td class="num pending" data-label="${L.time}">—</td>`;
     const nameCell = (sub, subClass = '') => `
-      <td>
+      <td class="cell-name">
         <div class="file-name">
           <span class="ext-badge">${esc(f.ext.slice(0, 5))}</span>
           <div class="file-meta">
@@ -281,24 +290,24 @@
           </div>
         </div>
       </td>`;
-    const remove = `<td><button class="btn btn-ghost icon-btn remove-btn" data-action="remove" title="${esc(t('removeFromList'))}" aria-label="${esc(t('removeFile', { name: f.name }))}"><svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></td>`;
+    const remove = `<td class="cell-remove"><button class="btn btn-ghost icon-btn remove-btn" data-action="remove" title="${esc(t('removeFromList'))}" aria-label="${esc(t('removeFile', { name: f.name }))}"><svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></td>`;
 
     if (f.status === 'loading') {
       const pct = Math.round(f.progress * 100);
       return `<tr data-id="${f.id}">
         ${nameCell(esc(t('reading')))}
-        <td class="num">${fmtSize(f.size)}</td>
-        <td class="num pending">—</td><td class="num pending">—</td><td class="num pending">—</td><td class="num pending">—</td>
-        <td><div class="actions"><div class="progress"><span style="width:${pct}%"></span></div><span class="progress-label">${pct}%</span></div></td>
+        <td class="num" data-label="${L.size}">${fmtSize(f.size)}</td>
+        ${pendingCells}
+        <td class="cell-actions"><div class="actions"><div class="progress"><span style="width:${pct}%"></span></div><span class="progress-label">${pct}%</span></div></td>
         ${remove}
       </tr>`;
     }
     if (f.status === 'error') {
       return `<tr data-id="${f.id}">
         ${nameCell(esc(I18n.message(f.error)), 'error')}
-        <td class="num">${fmtSize(f.size)}</td>
-        <td class="num pending">—</td><td class="num pending">—</td><td class="num pending">—</td><td class="num pending">—</td>
-        <td></td>
+        <td class="num" data-label="${L.size}">${fmtSize(f.size)}</td>
+        ${pendingCells}
+        <td class="cell-actions empty-cell"></td>
         ${remove}
       </tr>`;
     }
@@ -315,12 +324,12 @@
     }
     return `<tr data-id="${f.id}">
       ${nameCell(sub, warnings.length ? 'warn' : '')}
-      <td class="num">${fmtSize(f.size)}</td>
-      <td class="num">${fmtInt(s.words)}</td>
-      <td class="num">${fmtInt(s.charsNoSpaces)}</td>
-      <td class="num">${fmtInt(s.charsWithSpaces)}</td>
-      <td class="num">${Core.readingTime(s.words, settings.wordsPerMinute)}</td>
-      <td><div class="actions">${actions}</div></td>
+      <td class="num" data-label="${L.size}">${fmtSize(f.size)}</td>
+      <td class="num" data-label="${L.words}">${fmtInt(s.words)}</td>
+      <td class="num" data-label="${L.noSp}">${fmtInt(s.charsNoSpaces)}</td>
+      <td class="num" data-label="${L.withSp}">${fmtInt(s.charsWithSpaces)}</td>
+      <td class="num" data-label="${L.time}">${Core.readingTime(s.words, settings.wordsPerMinute)}</td>
+      <td class="cell-actions"><div class="actions">${actions}</div></td>
       ${remove}
     </tr>`;
   }

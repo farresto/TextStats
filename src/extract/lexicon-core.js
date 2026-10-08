@@ -6,8 +6,48 @@
 // (built by tools/build-lexicon.py). Loading those files is platform-specific.
 const WordClasses = require('../renderer/wordclasses');
 
-// Lexicon text: "#class1,class2" header lines followed by the word forms with those classes.
+// Lexicon text (see tools/build-lexicon.py). Format v2, used by the app:
+//   "#v2<TAB>group0<TAB>group1..." then sorted lines "word<TAB>groupNumber(base 36)",
+// where a group is a comma-separated class list ("nouns,verbs?").
+// Lookups use binary search over a plain sorted array, which needs far less memory
+// than a Map of ~550,000 words (this matters on phones).
+// Returns an object with get(word) -> frozen class array or undefined.
 function parseLexicon(text) {
+  if (!text.startsWith('#v2')) return parseGrouped(text);
+  const nl = text.indexOf('\n');
+  const groups = text.slice(4, nl).split('\t').map((g) => Object.freeze(g.split(',')));
+  const words = [];
+  const cls = [];
+  let pos = nl + 1;
+  while (pos < text.length) {
+    const tab = text.indexOf('\t', pos);
+    if (tab < 0) break;
+    let end = text.indexOf('\n', tab);
+    if (end < 0) end = text.length;
+    words.push(text.slice(pos, tab));
+    cls.push(parseInt(text.slice(tab + 1, end), 36));
+    pos = end + 1;
+  }
+  const groupOf = Uint16Array.from(cls);
+  return {
+    size: words.length,
+    get(word) {
+      let lo = 0;
+      let hi = words.length - 1;
+      while (lo <= hi) {
+        const mid = (lo + hi) >> 1;
+        const w = words[mid];
+        if (w === word) return groups[groupOf[mid]];
+        if (w < word) lo = mid + 1;
+        else hi = mid - 1;
+      }
+      return undefined;
+    },
+  };
+}
+
+// Older format: "#class1,class2" headers followed by their words.
+function parseGrouped(text) {
   const map = new Map();
   let cls = null;
   for (const line of text.split('\n')) {

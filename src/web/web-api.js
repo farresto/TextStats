@@ -59,31 +59,73 @@
     return { path: id, name: f.name, ext: dot > 0 ? f.name.slice(dot).toLowerCase() : '', size: f.size, isDirectory: false };
   }
 
-  // One worker does the reading and word classification.
-  const worker = new Worker('worker.js');
+  // One worker does the reading and word classification. If the browser stops it
+  // (for example a phone running out of memory) it is restarted and the waiting files
+  // get an error instead of staying on "Reading…" forever.
+  const EXTRACT_TIMEOUT_MS = 180000;
+  let worker = null;
   let seq = 0;
   const pending = new Map();
   const progressListeners = new Set();
-  worker.onmessage = (e) => {
-    const { id, type, value, result } = e.data;
+
+  function failAll(error) {
+    for (const p of pending.values()) {
+      clearTimeout(p.timer);
+      p.resolve({ ok: false, error });
+    }
+    pending.clear();
+  }
+  function startWorker() {
+    worker = new Worker('worker.js');
+    worker.onmessage = (e) => {
+      const { id, type, value, result } = e.data;
+      const p = pending.get(id);
+      if (!p) return;
+      if (type === 'progress') {
+        clearTimeout(p.timer);
+        p.timer = setTimeout(() => timeout(id), EXTRACT_TIMEOUT_MS); // still making progress
+        for (const cb of progressListeners) cb({ filePath: p.fileId, value });
+        return;
+      }
+      clearTimeout(p.timer);
+      pending.delete(id);
+      p.resolve(result);
+    };
+    worker.onerror = (e) => {
+      e.preventDefault();
+      failAll({ code: 'workerCrashed', detail: e.message || 'worker error' });
+      worker.terminate();
+      worker = null;
+    };
+  }
+  function timeout(id) {
     const p = pending.get(id);
     if (!p) return;
-    if (type === 'progress') {
-      for (const cb of progressListeners) cb({ filePath: p.fileId, value });
-      return;
-    }
     pending.delete(id);
-    p.resolve(result);
-  };
-  worker.onerror = (e) => {
-    for (const p of pending.values()) p.resolve({ ok: false, error: { code: 'generic', detail: e.message || 'worker error' } });
+    p.resolve({ ok: false, error: { code: 'timeout' } });
+    // The worker may be stuck: start a fresh one for the other files.
+    const others = [...pending.values()];
     pending.clear();
-  };
+    if (worker) worker.terminate();
+    worker = null;
+    for (const o of others) {
+      clearTimeout(o.timer);
+      o.resolve({ ok: false, error: { code: 'workerCrashed', detail: 'restarted' } });
+    }
+  }
   function call(msg, transfer, fileId) {
+    if (!worker) startWorker();
     const id = ++seq;
     return new Promise((resolve) => {
-      pending.set(id, { resolve, fileId });
-      worker.postMessage({ ...msg, id }, transfer || []);
+      const timer = setTimeout(() => timeout(id), EXTRACT_TIMEOUT_MS);
+      pending.set(id, { resolve, fileId, timer });
+      try {
+        worker.postMessage({ ...msg, id }, transfer || []);
+      } catch (err) {
+        clearTimeout(timer);
+        pending.delete(id);
+        resolve({ ok: false, error: { code: 'generic', detail: String(err && err.message ? err.message : err) } });
+      }
     });
   }
 
